@@ -1,6 +1,3 @@
-// Renders a tiny inline SVG bar chart of "messages by hour-of-day".
-// No external chart libraries — this project uses vanilla JS only.
-
 (function () {
     const el = document.getElementById('hour-chart');
     if (!el) return;

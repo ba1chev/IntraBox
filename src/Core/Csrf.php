@@ -6,14 +6,6 @@ namespace App\Core;
 
 use RuntimeException;
 
-/**
- * CSRF protection: synchronizer-token pattern.
- *
- *   <form method="post">
- *     <?= Csrf::field() ?>
- *     ...
- *   </form>
- */
 final class Csrf
 {
     private const KEY = '_csrf';

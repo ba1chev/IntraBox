@@ -1,9 +1,4 @@
 <?php
-/**
- * IntraBox — Front Controller
- *
- * All HTTP requests are routed through this single entry point.
- */
 
 declare(strict_types=1);
 
@@ -22,12 +17,10 @@ Session::start();
 
 $router = new Router();
 
-// Public
 $router->get('/login',                 [AuthController::class, 'showLogin']);
 $router->post('/login',                [AuthController::class, 'login']);
 $router->post('/logout',               [AuthController::class, 'logout']);
 
-// Authenticated
 $router->get('/',                      [InboxController::class, 'index']);
 $router->get('/inbox',                 [InboxController::class, 'index']);
 $router->get('/sent',                  [InboxController::class, 'sent']);
@@ -45,7 +38,6 @@ $router->post('/groups/{id}/remove',   [GroupController::class, 'removeMember'])
 
 $router->get('/rules',                 [RulesController::class, 'index']);
 
-// Admin only
 $router->get('/admin',                 [AdminController::class, 'dashboard']);
 $router->get('/admin/users',           [AdminController::class, 'users']);
 $router->post('/admin/users',          [AdminController::class, 'createUser']);

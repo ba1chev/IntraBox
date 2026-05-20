@@ -1,14 +1,7 @@
-// IntraBox — minimal client-side enhancements
-//
-// 1) Live abuse detection in the compose form (mirrors the server-side regex
-//    list so users get instant feedback BEFORE submitting).
-// 2) Generic "submit-once" guard to prevent double posts on slow networks.
-
 (function () {
     'use strict';
 
-    // Same patterns as src/Services/AbuseDetector.php — kept in sync manually.
-    // For the exam we want the user to see the warning immediately while typing.
+    // Mirror of src/Services/AbuseDetector.php — kept in sync manually.
     const PATTERNS = [
         { name: 'email',                  regex: /[\w.+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/u,             severity: 3 },
         { name: 'phone_bg',               regex: /(?:\+?359|0)\s*(?:\d\s*){8,9}/u,                     severity: 3 },
@@ -47,7 +40,6 @@
         body && body.addEventListener('input', scan);
     }
 
-    // Submit-once guard
     document.querySelectorAll('form').forEach(f => {
         f.addEventListener('submit', () => {
             const btn = f.querySelector('button[type=submit]');

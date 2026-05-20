@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Core\Database;
-use PDO;
 
-/**
- * User repository. All methods use prepared statements.
- */
 final class User
 {
     public static function findByUsername(string $username): ?array

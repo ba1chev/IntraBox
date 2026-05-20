@@ -33,7 +33,6 @@ final class AuthController
             return;
         }
 
-        // Refresh hash if PHP recommends it.
         if (password_needs_rehash((string) $user['password_hash'], PASSWORD_ARGON2ID)) {
             $newHash = password_hash($password, PASSWORD_ARGON2ID);
             $stmt = \App\Core\Database::pdo()->prepare(

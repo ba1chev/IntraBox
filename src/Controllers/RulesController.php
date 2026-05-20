@@ -38,7 +38,6 @@ final class RulesController
         Session::requireAdmin();
         Csrf::check();
 
-        // Parse weekday checkboxes: weekdays[] = 1..7
         $mask = 0;
         foreach (($_POST['weekdays'] ?? []) as $w) {
             $bit = 1 << (((int) $w) - 1);

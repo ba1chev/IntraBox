@@ -10,9 +10,6 @@ use PDO;
 final class Message
 {
     /**
-     * Inbox: messages addressed to me directly OR to a group I'm a member of.
-     * Returns the latest message per thread (we group by COALESCE(parent_id, id)).
-     *
      * @return list<array<string, mixed>>
      */
     public static function inboxFor(int $userId): array
@@ -54,8 +51,6 @@ final class Message
     }
 
     /**
-     * Sent box.
-     *
      * @return list<array<string, mixed>>
      */
     public static function sentBy(int $userId): array
@@ -104,10 +99,6 @@ final class Message
         return $stmt->fetchAll();
     }
 
-    /**
-     * True if $userId may read $message: they're sender, direct recipient, or
-     * member of the recipient group.
-     */
     public static function userCanRead(array $message, int $userId): bool
     {
         if ((int) $message['sender_id'] === $userId) {

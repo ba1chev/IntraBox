@@ -6,18 +6,9 @@ namespace App\Services;
 
 use App\Core\Database;
 
-/**
- * StatsService — provides both:
- *   - anonymous stats (visible to all users): aggregates that don't reveal
- *     individual identities,
- *   - non-anonymous stats (admin-only): per-user breakdowns including real
- *     names and abuse counts.
- */
 final class StatsService
 {
     /**
-     * Anonymous, public-safe stats.
-     *
      * @return array<string, mixed>
      */
     public static function anonymous(): array
@@ -42,7 +33,6 @@ final class StatsService
             "SELECT COUNT(*) FROM messages WHERE sent_at > NOW() - INTERVAL '7 days'"
         )->fetchColumn();
 
-        // Most active groups by message volume — group names are public, no PII.
         $activeGroups = $pdo->query(
             "SELECT g.name, COUNT(m.id) AS msg_count
              FROM groups g
@@ -52,7 +42,6 @@ final class StatsService
              LIMIT 5"
         )->fetchAll();
 
-        // Activity by hour-of-day (last 7 days) — useful chart, no PII.
         $byHour = $pdo->query(
             "SELECT EXTRACT(HOUR FROM sent_at)::int AS hour, COUNT(*) AS n
              FROM messages
@@ -75,8 +64,6 @@ final class StatsService
     }
 
     /**
-     * Non-anonymous, admin-only stats.
-     *
      * @return array<string, mixed>
      */
     public static function nonAnonymous(): array
@@ -103,7 +90,6 @@ final class StatsService
              LIMIT 10"
         )->fetchAll();
 
-        // Average time-to-read in seconds, computed over messages that were read.
         $avgRead = $pdo->query(
             "SELECT AVG(EXTRACT(EPOCH FROM (mr.read_at - m.sent_at)))::numeric(10,1) AS avg_seconds
              FROM message_reads mr

@@ -25,11 +25,7 @@ final class Rule
         return Database::pdo()->query($sql)->fetchAll();
     }
 
-    /**
-     * Visible-to-user rules: shown in the compose UI as a hint.
-     *
-     * @return list<array<string, mixed>>
-     */
+    /** @return list<array<string, mixed>> */
     public static function visible(): array
     {
         $sql = 'SELECT r.*,

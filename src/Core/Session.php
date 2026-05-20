@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-/**
- * Session helpers: start, login, current user lookup, role checks, regeneration.
- */
 final class Session
 {
     public static function start(): void
@@ -20,7 +17,6 @@ final class Session
 
     public static function login(int $userId, string $role): void
     {
-        // Regenerate to defeat fixation.
         session_regenerate_id(true);
         $_SESSION['uid']  = $userId;
         $_SESSION['role'] = $role;
@@ -65,9 +61,6 @@ final class Session
         return self::role() === 'admin';
     }
 
-    /**
-     * Require a logged-in user; otherwise redirect to login.
-     */
     public static function requireLogin(): void
     {
         if (!self::isLoggedIn()) {
@@ -87,9 +80,6 @@ final class Session
         }
     }
 
-    /**
-     * Flash messages: shown once on next request.
-     */
     public static function flash(string $type, string $message): void
     {
         $_SESSION['flash'][] = ['type' => $type, 'message' => $message];

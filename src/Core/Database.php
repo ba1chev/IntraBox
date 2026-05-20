@@ -8,10 +8,6 @@ use PDO;
 use PDOException;
 use RuntimeException;
 
-/**
- * PDO singleton wrapper. All DB access goes through here.
- * Prepared statements are mandatory throughout the app — no raw concatenation.
- */
 final class Database
 {
     private static ?PDO $pdo = null;
@@ -40,16 +36,13 @@ final class Database
             throw new RuntimeException('Database connection failed: ' . $e->getMessage(), 0, $e);
         }
 
-        // Ensure admin password matches .env on first boot (or after .env change).
         self::ensureAdminPassword(self::$pdo);
 
         return self::$pdo;
     }
 
-    /**
-     * On first boot the seed in init.sql contains a placeholder hash.
-     * Replace it with a real Argon2id hash of ADMIN_PASSWORD from the env.
-     */
+    // Replace the placeholder hash from init.sql with a real Argon2id hash
+    // of ADMIN_PASSWORD on first boot (or after .env change).
     private static function ensureAdminPassword(PDO $pdo): void
     {
         $username = $_ENV['ADMIN_USERNAME'] ?? 'admin';

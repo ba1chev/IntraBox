@@ -6,13 +6,6 @@ namespace App\Core;
 
 use RuntimeException;
 
-/**
- * Minimal view layer: renders a PHP template inside the layout.
- *
- *   View::render('inbox/list', ['messages' => $rows]);
- *
- * Inside templates, use the `e()` helper for escaping output.
- */
 final class View
 {
     /**
@@ -25,7 +18,6 @@ final class View
             throw new RuntimeException("View not found: {$template}");
         }
 
-        // Render the inner template into $content, then include the layout.
         extract($data, EXTR_SKIP);
         ob_start();
         require $templatePath;
@@ -33,7 +25,6 @@ final class View
 
         $layoutPath = __DIR__ . '/../Views/' . $layout . '.php';
         if (!is_file($layoutPath)) {
-            // Layout-less render (e.g., bare JSON page) — just echo content.
             echo $content;
             return;
         }
@@ -47,4 +38,3 @@ final class View
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }
-

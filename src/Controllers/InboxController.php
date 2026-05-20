@@ -52,7 +52,6 @@ final class InboxController
         $rootId = $msg['parent_id'] !== null ? (int) $msg['parent_id'] : (int) $msg['id'];
         $thread = Message::thread($rootId);
 
-        // Mark as read for everyone in the thread who is the current user.
         foreach ($thread as $m) {
             if ((int) $m['sender_id'] !== $me) {
                 Message::markRead((int) $m['id'], $me);

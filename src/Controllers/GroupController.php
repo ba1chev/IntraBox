@@ -40,7 +40,6 @@ final class GroupController
         }
         try {
             $id = Group::create($name, $desc !== '' ? $desc : null, (int) Session::userId());
-            // Creator becomes a member by default.
             Group::addMember($id, (int) Session::userId());
             Session::flash('success', 'Group created.');
             header('Location: /groups/' . $id);

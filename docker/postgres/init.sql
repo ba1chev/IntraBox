@@ -1,18 +1,8 @@
--- IntraBox — Database schema (PostgreSQL 16)
---
--- This file is auto-loaded by the postgres docker image on first start.
--- It creates the full schema and seeds an initial admin account.
---
--- The admin password hash here is a placeholder (Argon2id of "admin1234").
--- It is overwritten on first PHP boot if the .env ADMIN_PASSWORD differs.
+-- IntraBox schema (PostgreSQL 16). Auto-loaded by the postgres image on first start.
+-- The seeded admin password hash is a placeholder; PHP rewrites it from .env on first boot.
 
 SET client_min_messages = WARNING;
 
--- =============================================================
--- USERS
--- Pseudo-anonymous: every user has a display_alias visible to peers,
--- while real_name is admin-only.
--- =============================================================
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL PRIMARY KEY,
     username        VARCHAR(64)  UNIQUE NOT NULL,
@@ -26,9 +16,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- =============================================================
--- GROUPS
--- =============================================================
 CREATE TABLE IF NOT EXISTS groups (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(64)  UNIQUE NOT NULL,
@@ -43,13 +30,7 @@ CREATE TABLE IF NOT EXISTS group_members (
     PRIMARY KEY (group_id, user_id)
 );
 
--- =============================================================
--- RULES
--- Define who may write to whom and during which time window.
--- weekday_mask is a bitmask: 1=Mon, 2=Tue, 4=Wed, 8=Thu, 16=Fri, 32=Sat, 64=Sun.
--- 127 (default) = every day.
--- NULL sender_* / target_* means "anyone".
--- =============================================================
+-- weekday_mask: bitmask 1=Mon..64=Sun, 127=every day. NULL sender_*/target_* = anyone.
 CREATE TABLE IF NOT EXISTS rules (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(128) NOT NULL,
@@ -66,12 +47,6 @@ CREATE TABLE IF NOT EXISTS rules (
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- =============================================================
--- MESSAGES
--- Either recipient_id (single user) or recipient_group (fan-out) is set.
--- parent_id supports threading ("message grouping").
--- is_review flags messages that are reviews/critique.
--- =============================================================
 CREATE TABLE IF NOT EXISTS messages (
     id              SERIAL PRIMARY KEY,
     sender_id       INT          NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -86,7 +61,6 @@ CREATE TABLE IF NOT EXISTS messages (
     CHECK ((recipient_id IS NOT NULL) OR (recipient_group IS NOT NULL))
 );
 
--- Per-user read tracking (so a group message is "read" individually).
 CREATE TABLE IF NOT EXISTS message_reads (
     message_id      INT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
     user_id         INT NOT NULL REFERENCES users(id)    ON DELETE CASCADE,
@@ -94,10 +68,6 @@ CREATE TABLE IF NOT EXISTS message_reads (
     PRIMARY KEY (message_id, user_id)
 );
 
--- =============================================================
--- ABUSE LOG
--- Filled by AbuseDetector (regex pass) at send time; admin reviews.
--- =============================================================
 CREATE TABLE IF NOT EXISTS abuse_log (
     id              SERIAL PRIMARY KEY,
     message_id      INT          REFERENCES messages(id) ON DELETE CASCADE,
@@ -109,19 +79,12 @@ CREATE TABLE IF NOT EXISTS abuse_log (
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- =============================================================
--- INDEXES
--- =============================================================
 CREATE INDEX IF NOT EXISTS idx_msg_recipient ON messages(recipient_id, sent_at DESC);
 CREATE INDEX IF NOT EXISTS idx_msg_group     ON messages(recipient_group, sent_at DESC);
 CREATE INDEX IF NOT EXISTS idx_msg_thread    ON messages(parent_id);
 CREATE INDEX IF NOT EXISTS idx_msg_sender    ON messages(sender_id, sent_at DESC);
 CREATE INDEX IF NOT EXISTS idx_abuse_unreviewed ON abuse_log(reviewed, created_at DESC);
 
--- =============================================================
--- SEED admin user (hash will be re-set by PHP on first boot to match .env)
--- Placeholder hash = password_hash('admin1234', PASSWORD_ARGON2ID)
--- =============================================================
 INSERT INTO users (username, real_name, display_alias, email, password_hash, role)
 VALUES (
     'admin',

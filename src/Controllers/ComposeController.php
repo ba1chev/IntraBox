@@ -22,7 +22,6 @@ final class ComposeController
         Session::requireLogin();
         $me = (int) Session::userId();
 
-        // Pre-fill on reply: ?reply_to=N
         $replyTo = isset($_GET['reply_to']) ? (int) $_GET['reply_to'] : null;
         $replyTarget = null;
         $parentSubject = null;
@@ -57,7 +56,7 @@ final class ComposeController
         $body    = trim((string) ($_POST['body'] ?? ''));
         $isReview = !empty($_POST['is_review']);
         $parentId = !empty($_POST['parent_id']) ? (int) $_POST['parent_id'] : null;
-        $target   = (string) ($_POST['target'] ?? ''); // "user:42" or "group:7"
+        $target   = (string) ($_POST['target'] ?? '');
 
         if ($subject === '' || $body === '') {
             Session::flash('error', 'Subject and body are required.');
@@ -76,7 +75,6 @@ final class ComposeController
             return;
         }
 
-        // 1) Rule check
         $ruleResult = RuleEngine::canSend($me, $recipientUser, $recipientGroup);
         if (!$ruleResult['allowed']) {
             Session::flash('error', 'You cannot send this message: ' . $ruleResult['reason']);
@@ -84,10 +82,8 @@ final class ComposeController
             return;
         }
 
-        // 2) Abuse scan
         $findings = AbuseDetector::scan($subject . "\n" . $body);
         if (AbuseDetector::shouldBlock($findings)) {
-            // Log the attempt with NULL message_id (we don't persist the text).
             foreach ($findings as $f) {
                 AbuseLog::record(null, $me, $f['pattern'], $f['snippet'], $f['severity']);
             }
@@ -99,7 +95,6 @@ final class ComposeController
             return;
         }
 
-        // 3) Persist
         $messageId = Message::send(
             $me,
             $recipientUser,
@@ -110,7 +105,6 @@ final class ComposeController
             $parentId,
         );
 
-        // Log lower-severity findings against the persisted message.
         foreach ($findings as $f) {
             AbuseLog::record($messageId, $me, $f['pattern'], $f['snippet'], $f['severity']);
         }

@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-/**
- * Tiny URI router. Supports exact paths and {id}-style placeholders.
- *
- * Patterns: /messages/{id}  -> matches /messages/42, captures id=42
- */
 final class Router
 {
     /** @var array<string, list<array{pattern: string, handler: array{0: class-string, 1: string}}>> */
@@ -32,7 +27,6 @@ final class Router
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri    = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
-        // Trim trailing slash (except root)
         if ($uri !== '/' && str_ends_with($uri, '/')) {
             $uri = rtrim($uri, '/');
         }
@@ -53,7 +47,6 @@ final class Router
             }
         }
 
-        // No match
         http_response_code(404);
         echo '<!doctype html><meta charset="utf-8"><title>404</title>'
            . '<h1>404 — Not found</h1><p><a href="/">Back to IntraBox</a></p>';
