@@ -114,13 +114,12 @@ documentation.
 
 ## Team work split
 
-| Member | Topic                                                                              |
-|--------|------------------------------------------------------------------------------------|
-| x.1    | Auth + Users + Admin (AuthController, AdminController, sessions, CSRF, dashboard)  |
-| x.2    | Messages + Inbox + Compose + Threading + AbuseDetector                             |
-| x.3    | Groups + Rules + RuleEngine + StatsService                                         |
+| Member         | Topic                                                                                                              |
+|----------------|--------------------------------------------------------------------------------------------------------------------|
+| Yoan Baychev   | Auth + Users + Admin + Inbox + Compose + Threading + AbuseDetector (Core, AuthController, AdminController, InboxController, ComposeController, sessions, CSRF, dashboard, abuse review) |
+| Ivailo Kunchev | Groups + Rules + RuleEngine + StatsService (GroupController, RulesController, public rules page, admin statistics) |
 
-Shared by all: Docker setup, schema, documentation, testing.
+Shared by both: Docker setup, schema, documentation, testing.
 
 ## License
 

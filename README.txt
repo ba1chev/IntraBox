@@ -9,9 +9,8 @@ Date:     2026-05-17
 
 AUTHORS
 -------
-Member 1: <First Last>, faculty no. <NNNNNN>
-Member 2: <First Last>, faculty no. <NNNNNN>
-Member 3: <First Last>, faculty no. <NNNNNN>
+Yoan Baychev,    faculty no. 0MI0600328
+Ivailo Kunchev,  faculty no. 2MI0600305
 
 ARCHIVE CONTENTS
 ----------------

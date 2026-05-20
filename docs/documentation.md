@@ -5,11 +5,10 @@
 > Topic #24 — Anonymous internal "mail" for communication
 >
 > Members:
-> 1. *First Last* (faculty no. NNNNNN)
-> 2. *First Last* (faculty no. NNNNNN)
-> 3. *First Last* (faculty no. NNNNNN)
+> 1. *Yoan Baychev* (faculty no. 0MI0600328)
+> 2. *Ivailo Kunchev* (faculty no. 2MI0600305)
 >
-> Signatures: ____________ · ____________ · ____________
+> Signatures: ____________ · ____________
 
 ---
 
@@ -228,13 +227,12 @@ docker compose up --build
 
 ## 9. Work split
 
-| Member | Responsibilities                                                                                                    |
-|--------|---------------------------------------------------------------------------------------------------------------------|
-| x.1    | `Core/*`, `AuthController`, `AdminController`, users CRUD, dashboard. CSRF, session, login flow, layout.            |
-| x.2    | `InboxController`, `ComposeController`, `Models/Message`, threading (parent_id), `Services/AbuseDetector`.          |
-| x.3    | `GroupController`, `RulesController`, `Models/Group`, `Models/Rule`, `Services/RuleEngine`, `Services/StatsService`.|
+| Member         | Responsibilities                                                                                                                                                |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Yoan Baychev   | `Core/*`, `AuthController`, `AdminController`, `InboxController`, `ComposeController`, `Models/User`, `Models/Message`, `Models/AbuseLog`, `Services/AbuseDetector`, threading, login flow, layout, dashboard, abuse review. |
+| Ivailo Kunchev | `GroupController`, `RulesController`, `Models/Group`, `Models/Rule`, `Services/RuleEngine`, `Services/StatsService`, group/rule views, admin statistics, public rules page.                                                  |
 
-Shared by all three: Docker setup, DB schema, this documentation,
+Shared by both: Docker setup, DB schema, this documentation,
 manual testing and deployment to gitlab.
 
 ## 10. Conclusion and possible extensions
