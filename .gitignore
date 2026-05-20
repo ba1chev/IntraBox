@@ -1,0 +1,23 @@
+# Environment
+.env
+.env.local
+
+# PHP
+/vendor/
+composer.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# Uploads (keep folder, ignore content)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Docker
+docker/postgres/data/
