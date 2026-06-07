@@ -79,7 +79,7 @@ final class User
     public static function setActive(int $id, bool $active): void
     {
         $stmt = Database::pdo()->prepare('UPDATE users SET is_active = :a WHERE id = :id');
-        $stmt->execute([':a' => $active, ':id' => $id]);
+        $stmt->execute([':a' => $active ? 't' : 'f', ':id' => $id]);
     }
 
     public static function aliasFor(int $id): string
