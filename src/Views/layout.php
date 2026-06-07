@@ -18,13 +18,12 @@ $flashes = Session::takeFlash();
 </head>
 <body>
 <header class="topbar">
-    <a class="brand" href="/">📬 IntraBox</a>
+    <a class="brand" href="/">IntraBox</a>
     <?php if ($me): ?>
     <nav class="nav">
         <a href="/inbox">Inbox</a>
         <a href="/sent">Sent</a>
-        <a href="/compose" class="nav-cta">New</a>
-        <a href="/groups">Groups</a>
+<a href="/groups">Groups</a>
         <a href="/rules">Rules</a>
         <?php if ($role === 'admin'): ?>
             <a href="/admin">Admin</a>
@@ -46,7 +45,7 @@ $flashes = Session::takeFlash();
 </main>
 
 <footer class="footer">
-    <small>IntraBox · Web programming exam project · FMI, Sofia University · 2026</small>
+    <small>IntraBox</small>
 </footer>
 
 <script src="/assets/js/app.js" defer></script>

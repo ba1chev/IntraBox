@@ -17,6 +17,6 @@
     </form>
 
     <p class="muted small">
-        User accounts are created by an administrator.
+        No account? <a href="/register">Register</a>
     </p>
 </div>

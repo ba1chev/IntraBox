@@ -9,8 +9,8 @@ use App\Services\RuleEngine;
     <a href="/admin" class="btn-link">← dashboard</a>
 </div>
 
-<details class="card" open>
-    <summary><strong>+ New rule</strong></summary>
+<div class="card">
+    <h2 style="margin:0 0 12px">New rule</h2>
     <form method="post" action="/admin/rules" class="form form-grid">
         <?= App\Core\Csrf::field() ?>
         <label class="span-2"><span>Name</span><input type="text" name="name" required maxlength="128"></label>
@@ -87,7 +87,7 @@ use App\Services\RuleEngine;
 
         <button type="submit" class="btn-primary span-2">Create rule</button>
     </form>
-</details>
+</div>
 
 <h2>Active rules</h2>
 <?php if ($rules === []): ?>

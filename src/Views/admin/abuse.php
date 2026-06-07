@@ -31,7 +31,7 @@
             <td><span class="badge badge-pattern"><?= e($a['pattern_matched']) ?></span></td>
             <td class="snippet"><?= e($a['snippet']) ?></td>
             <td>
-                <?php for ($i = 0; $i < (int) $a['severity']; $i++): ?>★<?php endfor; ?>
+                <?= (int) $a['severity'] ?>
             </td>
             <td>
                 <?php if ($a['message_id']): ?>

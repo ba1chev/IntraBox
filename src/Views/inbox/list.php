@@ -1,6 +1,5 @@
 <?php
 /** @var list<array<string, mixed>> $messages */
-
 use App\Services\RuleEngine;
 ?>
 <div class="page-header">
@@ -11,7 +10,7 @@ use App\Services\RuleEngine;
 <?php if ($messages === []): ?>
     <p class="empty">No messages. When someone writes you, the message will show up here.</p>
 <?php else: ?>
-<table class="table">
+<table class="table" id="msg-table">
     <thead>
     <tr>
         <th>From</th>
