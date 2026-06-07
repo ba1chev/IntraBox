@@ -20,6 +20,8 @@ $router = new Router();
 $router->get('/login',                 [AuthController::class, 'showLogin']);
 $router->post('/login',                [AuthController::class, 'login']);
 $router->post('/logout',               [AuthController::class, 'logout']);
+$router->get('/register',              [AuthController::class, 'showRegister']);
+$router->post('/register',             [AuthController::class, 'register']);
 
 $router->get('/',                      [InboxController::class, 'index']);
 $router->get('/inbox',                 [InboxController::class, 'index']);

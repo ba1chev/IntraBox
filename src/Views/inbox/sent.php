@@ -7,7 +7,7 @@
 <?php if ($messages === []): ?>
     <p class="empty">You haven't sent any messages yet.</p>
 <?php else: ?>
-<table class="table">
+<table class="table" id="msg-table">
     <thead>
     <tr><th>To</th><th>Subject</th><th>Sent</th></tr>
     </thead>

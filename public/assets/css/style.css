@@ -86,14 +86,14 @@ h3 { font-size: 1rem; margin-top: 20px; }
 .card summary { cursor: pointer; padding: 4px 0; }
 
 .form { display: flex; flex-direction: column; gap: 14px; max-width: 700px; }
-.form label { display: flex; flex-direction: column; gap: 4px; }
+.form label { display: flex; flex-direction: column; gap: 4px; overflow: visible; }
 .form label > span { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
-.form input[type=text], .form input[type=email], .form input[type=password],
+.form input[type=text]:not(.recipient-search), .form input[type=email], .form input[type=password],
 .form input[type=time], .form select, .form textarea {
     padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
     font: inherit; background: var(--surface);
 }
-.form input:focus, .form select:focus, .form textarea:focus {
+.form input[type=text]:not(.recipient-search):focus, .form select:focus, .form textarea:focus {
     outline: 2px solid var(--primary); border-color: var(--primary);
 }
 .form-grid {
@@ -212,6 +212,87 @@ fieldset legend { color: var(--muted); padding: 0 6px; font-size: 0.85rem; }
 .member-list li:last-child { border-bottom: 0; }
 
 .snippet { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.9rem; max-width: 360px; word-break: break-all; }
+
+/* ── Outlook-style To field ─────────────────────────────────────── */
+.to-field {
+    display: flex; align-items: flex-start;
+}
+.to-label {
+    font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .06em; min-width: 36px; padding: 10px 10px 0 0;
+    flex-shrink: 0; user-select: none;
+}
+.recipient-wrap {
+    flex: 1; min-width: 0;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface); transition: border-color .15s, box-shadow .15s;
+}
+.recipient-wrap:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59,89,247,.10);
+}
+.recipient-tags {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
+    min-height: 38px; padding: 6px 10px; cursor: text;
+}
+.recipient-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #eff4ff; border: 1px solid #c7d8ff;
+    border-radius: 16px; padding: 2px 6px 2px 2px;
+    font-size: 0.85rem; color: #1e3a8a; max-width: 240px;
+    transition: background .12s;
+}
+.recipient-tag:hover { background: #dce8ff; }
+.tag-avatar {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    color: #fff; font-size: 0.68rem; font-weight: 700; flex-shrink: 0;
+}
+.tag-label {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 180px; font-weight: 500;
+}
+.tag-remove {
+    background: none; border: 0; cursor: pointer; color: #93aed4;
+    font-size: 1rem; line-height: 1; padding: 0; flex-shrink: 0;
+    border-radius: 50%; width: 16px; height: 16px;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.tag-remove:hover { background: #fde8e8; color: var(--danger); }
+.recipient-search {
+    border: 0; outline: 0; font: inherit; background: transparent;
+    min-width: 140px; flex: 1; padding: 2px 2px; font-size: 0.95rem;
+    color: var(--text);
+}
+
+/* ── Inline suggestion list ──────────────────────────────────────── */
+.recipient-list {
+    border-top: 1px solid var(--border);
+}
+.recipient-list.hidden { display: none; }
+.sugg-header {
+    padding: 7px 12px 3px;
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--muted);
+}
+.sugg-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 12px; cursor: pointer;
+    transition: background .08s;
+}
+.sugg-row:hover, .sugg-row.active { background: #f0f5ff; }
+.sugg-row.active { background: #e8effe; }
+.sugg-row.already-selected { opacity: 0.4; pointer-events: none; }
+.sugg-avatar {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 0.85rem; font-weight: 700;
+}
+.sugg-info { display: flex; flex-direction: column; gap: 0; min-width: 0; flex: 1; }
+.sugg-name { font-size: 0.9rem; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sugg-row.active .sugg-name { color: var(--primary-dark); }
+.sugg-meta { font-size: 0.73rem; color: var(--muted); }
+
 
 .rules-callout {
     background: #fffae5; border: 1px solid #f0e0a0; border-radius: var(--radius);

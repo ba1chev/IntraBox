@@ -56,7 +56,13 @@ final class ComposeController
         $body    = trim((string) ($_POST['body'] ?? ''));
         $isReview = !empty($_POST['is_review']);
         $parentId = !empty($_POST['parent_id']) ? (int) $_POST['parent_id'] : null;
-        $target   = (string) ($_POST['target'] ?? '');
+        $targets = array_filter((array) ($_POST['targets'] ?? []));
+
+        if ($targets === []) {
+            Session::flash('error', 'Please select at least one recipient.');
+            header('Location: /compose');
+            return;
+        }
 
         if ($subject === '' || $body === '') {
             Session::flash('error', 'Subject and body are required.');
@@ -64,54 +70,55 @@ final class ComposeController
             return;
         }
 
-        [$kind, $idStr] = array_pad(explode(':', $target, 2), 2, '');
-        $targetId = (int) $idStr;
-        $recipientUser  = $kind === 'user'  && $targetId > 0 ? $targetId : null;
-        $recipientGroup = $kind === 'group' && $targetId > 0 ? $targetId : null;
+        $blocked = [];
+        $sent    = 0;
+        foreach ($targets as $target) {
+            [$kind, $idStr] = array_pad(explode(':', (string) $target, 2), 2, '');
+            $targetId       = (int) $idStr;
+            $recipientUser  = $kind === 'user'  && $targetId > 0 ? $targetId : null;
+            $recipientGroup = $kind === 'group' && $targetId > 0 ? $targetId : null;
 
-        if ($recipientUser === null && $recipientGroup === null) {
-            Session::flash('error', 'Please select a recipient.');
-            header('Location: /compose');
-            return;
-        }
-
-        $ruleResult = RuleEngine::canSend($me, $recipientUser, $recipientGroup);
-        if (!$ruleResult['allowed']) {
-            Session::flash('error', 'You cannot send this message: ' . $ruleResult['reason']);
-            header('Location: /compose');
-            return;
-        }
-
-        $findings = AbuseDetector::scan($subject . "\n" . $body);
-        if (AbuseDetector::shouldBlock($findings)) {
-            foreach ($findings as $f) {
-                AbuseLog::record(null, $me, $f['pattern'], $f['snippet'], $f['severity']);
+            if ($recipientUser === null && $recipientGroup === null) {
+                continue;
             }
-            Session::flash('error',
-                'Message blocked: an attempt to disclose personal information was detected ('
-                . implode(', ', array_unique(array_column($findings, 'pattern'))) . ').'
-            );
+
+            $ruleResult = RuleEngine::canSend($me, $recipientUser, $recipientGroup);
+            if (!$ruleResult['allowed']) {
+                $blocked[] = $ruleResult['reason'];
+                continue;
+            }
+
+            $findings  = AbuseDetector::scan($subject . "\n" . $body);
+            if (AbuseDetector::shouldBlock($findings)) {
+                foreach ($findings as $f) {
+                    AbuseLog::record(null, $me, $f['pattern'], $f['snippet'], $f['severity']);
+                }
+                Session::flash('error',
+                    'Message blocked: an attempt to disclose personal information was detected ('
+                    . implode(', ', array_unique(array_column($findings, 'pattern'))) . ').'
+                );
+                header('Location: /compose');
+                return;
+            }
+
+            $messageId = Message::send($me, $recipientUser, $recipientGroup, $subject, $body, $isReview, $parentId);
+
+            foreach ($findings as $f) {
+                AbuseLog::record($messageId, $me, $f['pattern'], $f['snippet'], $f['severity']);
+            }
+            $sent++;
+        }
+
+        if ($sent === 0) {
+            Session::flash('error', 'No messages sent. ' . implode(' ', $blocked));
             header('Location: /compose');
             return;
         }
 
-        $messageId = Message::send(
-            $me,
-            $recipientUser,
-            $recipientGroup,
-            $subject,
-            $body,
-            $isReview,
-            $parentId,
-        );
-
-        foreach ($findings as $f) {
-            AbuseLog::record($messageId, $me, $f['pattern'], $f['snippet'], $f['severity']);
+        $msg = 'Message sent' . ($sent > 1 ? " to {$sent} recipients" : '') . '.';
+        if ($blocked !== []) {
+            $msg .= ' Some recipients were skipped by rules.';
         }
-
-        $msg = $findings === []
-            ? 'Message sent.'
-            : 'Message sent, but flagged for admin review.';
         Session::flash('success', $msg);
         header('Location: /sent');
     }
